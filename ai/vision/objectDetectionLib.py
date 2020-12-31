@@ -58,10 +58,13 @@ def objectDetection(imFile, mode = 'return-classes', putText = True):
 		return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 	if mode == 'return-classes' :
-		objects = dict()
+		objects = {'objects' : []}
 		for i in range(len(boxes)):
-		    if i in indexes:
-		    	label = str(classes[class_ids[i]])
-		    	objects[label] = confidences[i]
-		    	
+			if i in indexes:
+				x, y, w, h = boxes[i]
+				label = str(classes[class_ids[i]])
+				confidence = confidences[i]
+				objects['objects'].append({'Category' : label, 'Bounds' : str((x,y,x + w, y + h)), 'Classification confidence':confidence})
+
 		return objects
+
