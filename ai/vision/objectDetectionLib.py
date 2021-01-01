@@ -1,10 +1,13 @@
 import numpy as np
 import cv2
+import base64
+import json
+from PIL import Image
 
 # Load Yolo
-net = cv2.dnn.readNet("/home/yigit/Documents/project/apiv3/thirdparty/yolo/yolov3.weights", "/home/yigit/Documents/project/apiv3/thirdparty/yolo/yolov3.cfg")
+net = cv2.dnn.readNet("/home/yigit/Documents/Git-Repos/ML-APIs/thirdparty/yolo/yolov3.weights", "/home/yigit/Documents/Git-Repos/ML-APIs/thirdparty/yolo/yolov3.cfg")
 classes = []
-with open("/home/yigit/Documents/project/apiv3/thirdparty/yolo/coco.names", "r") as f:
+with open("/home/yigit/Documents/Git-Repos/ML-APIs/thirdparty/yolo/coco.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
 
 layer_names = net.getLayerNames()
@@ -44,8 +47,9 @@ def objectDetection(imFile, mode = 'return-classes', putText = True):
 	            class_ids.append(class_id)
 
 	indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-	
+
 	if mode == 'label':
+		data = dict()
 		for i in range(len(boxes)):
 			if i in indexes:
 				x, y, w, h = boxes[i]
@@ -54,8 +58,13 @@ def objectDetection(imFile, mode = 'return-classes', putText = True):
 				cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
 				if putText == True:
 					cv2.putText(img, label, (x, y + 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
-	
-		return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+				
+
+		img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_RGB2BGR), 'RGB')	
+		
+		s = img.tobytes().decode("latin1")
+				
+		return s
 
 	if mode == 'return-classes' :
 		objects = {'objects' : []}
@@ -64,7 +73,7 @@ def objectDetection(imFile, mode = 'return-classes', putText = True):
 				x, y, w, h = boxes[i]
 				label = str(classes[class_ids[i]])
 				confidence = confidences[i]
-				objects['objects'].append({'Category' : label, 'Bounds' : str((x,y,x + w, y + h)), 'Classification confidence':confidence})
+				objects['objects'].append({'category' : label, 'bounds' : str((x,y,x + w, y + h)), 'classificationConfidence':confidence})
 
 		return objects
 

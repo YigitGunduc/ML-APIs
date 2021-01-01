@@ -4,11 +4,16 @@ import numpy as np
 
 # Loading landmarks detector
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor("/home/yigit/Documents/project/apiv3/thirdparty/shape_predictor_68_face_landmarks.dat")
-face_cascade = cv2.CascadeClassifier('/home/yigit/Documents/project/apiv3/thirdparty/opencv/haarcascade_frontalface_default.xml')
+predictor = dlib.shape_predictor("/home/yigit/Documents/Git-Repos/ML-APIs/thirdparty/shape_predictor_68_face_landmarks.dat")
+face_cascade = cv2.CascadeClassifier('/home/yigit/Documents/Git-Repos/ML-APIs/thirdparty/opencv/haarcascade_frontalface_default.xml')
 
 
 def faceDetection(imFile):
+    '''
+    find faces and face landmarks on a given image
+    @param imFile (str) : file name of the image
+    @return : labeled image
+    ''' 
     img = cv2.imread(imFile)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
