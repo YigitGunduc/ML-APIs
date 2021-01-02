@@ -135,4 +135,8 @@ dmypy.json
 .pytype/
 
 # Cython debug symbols
+.cpython-36.pyc
 cython_debug/
+
+# Vi/Vim
+.swp
