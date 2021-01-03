@@ -3,6 +3,7 @@ import cv2
 import base64
 import json
 from PIL import Image
+import string
 
 # Load Yolo
 net = cv2.dnn.readNet("/home/yigit/Documents/Git-Repos/ML-APIs/thirdparty/yolo/yolov3.weights", "/home/yigit/Documents/Git-Repos/ML-APIs/thirdparty/yolo/yolov3.cfg")
@@ -48,32 +49,33 @@ def objectDetection(imFile, mode = 'return-classes', putText = True):
 
 	indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
 
-	if mode == 'label':
-		data = dict()
-		for i in range(len(boxes)):
-			if i in indexes:
-				x, y, w, h = boxes[i]
-				label = str(classes[class_ids[i]])
-				color = colors[i]
-				cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
-				if putText == True:
-					cv2.putText(img, label, (x, y + 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+	# if mode == 'label':
+	# 	data = dict()
+	# 	for i in range(len(boxes)):
+	# 		if i in indexes:
+	# 			x, y, w, h = boxes[i]
+	# 			label = str(classes[class_ids[i]])
+	# 			color = colors[i]
+	# 			cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
+	# 			if putText == True:
+	# 				cv2.putText(img, label, (x, y + 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
 				
 
-		img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_RGB2BGR), 'RGB')	
+	# 	img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_RGB2BGR), 'RGB')	
 		
-		s = img.tobytes().decode("latin1")
+	# 	s = img.tobytes().decode("latin1")
 				
-		return s
+	# 	return s
 
-	if mode == 'return-classes' :
-		objects = {'objects' : []}
-		for i in range(len(boxes)):
-			if i in indexes:
-				x, y, w, h = boxes[i]
-				label = str(classes[class_ids[i]])
-				confidence = confidences[i]
-				objects['objects'].append({'category' : label, 'bounds' : str((x,y,x + w, y + h)), 'classificationConfidence':confidence})
+	
+	objectName = 1
+	objects = {'objects' : []}
+	for i in range(len(boxes)):
+		if i in indexes:
+			x, y, w, h = boxes[i]
+			label = str(classes[class_ids[i]])
+			confidence = confidences[i]
+			objects['objects'].append({'name': label.capitalize(), 'bounds' : str((x,y,x + w, y + h)), 'confidence':confidence})
+			objectName += 1
 
-		return objects
-
+	return objects
